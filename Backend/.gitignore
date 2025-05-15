@@ -1,0 +1,37 @@
+# Node modules
+node_modules/
+
+# Build
+dist/
+build/
+
+# Logs
+logs
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Environment and sensitive config
+.env
+.env.local
+.env.*.local
+
+# Ignore VSCode settings (opcional)
+.vscode/
+
+# Ignore database connection file (se contiver credenciais)
+src/db/db.ts
+
+# Windows/Mac specific
+*.swp
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# Avoid LF vs CRLF warnings (Git handles this)
+* text=auto
