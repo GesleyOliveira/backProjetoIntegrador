@@ -1,0 +1,52 @@
+
+POST http://localhost:3000/historico/points
+Content-Type: application/json
+ 
+{
+  "id": "id Gesley",
+  "iduser": "Gesley",
+  "points": 100000
+}
+
+###
+POST http://localhost:3000/historico/transacoes
+Content-Type: application/json
+ 
+{
+  "iduser": "Gesley",
+  "description": "Trocou pelo carro",
+  "points": 100000
+}
+
+###
+
+GET http://localhost:3000/historico/todos/Gesley
+
+###
+//Atualizar pontos e id na tabela histPoints:
+PUT http://localhost:3000/historico/histPoints/id Gesley
+Content-Type: application/json
+
+{
+  "points": 500000
+}
+
+###
+
+//Atualizar descrição e pontos na tabela histtransactions:
+PUT http://localhost:3000/historico/histtransactions/1
+Content-Type: application/json
+
+{
+  "points": 5000,
+  "description": "Atualizado para bicicleta"
+}
+
+
+###
+
+DELETE http://localhost:3000/historico/histPoints/id Gesley
+
+###
+
+DELETE http://localhost:3000/historico/histtransactions/1
