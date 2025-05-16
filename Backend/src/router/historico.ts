@@ -1,10 +1,40 @@
-import express from 'express'
+import express = require('express');
 import { promisePool } from '../db/db'
-
 
 const router = express.Router()
 
-// POST - Histórico de points (ao ler QR code)
+/**
+ * @swagger
+ * /historico/points:
+ *   post:
+ *     summary:Registra um histórico de pontos (ex: ao ler QR code)
+ *     tags:
+ *       - Histórico
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - iduser
+ *               - points
+ *             properties:
+ *               id:
+ *                 type: string
+ *               iduser:
+ *                 type: string
+ *               points:
+ *                 type: number
+ *     responses:
+ *       201:
+ *         description: Histórico de points registrado com sucesso
+ *       400:
+ *         description: Campos obrigatórios ausentes
+ *       500:
+ *         description: Erro interno
+ */
 router.post('/historico/points', async (req, res): Promise<void> => {
   const { id, iduser, points } = req.body
  
@@ -25,7 +55,39 @@ router.post('/historico/points', async (req, res): Promise<void> => {
   }
 })
 
-// POST - Histórico de transações (ao realizar troca)
+/**
+ * @swagger
+ * /historico/transacoes:
+ *   post:
+ *     summary:Registra um histórico de transações (ex: ao realizar troca)
+ *     tags:
+ *       - Histórico
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - iduser
+ *               - description
+ *               - points
+ *             properties:
+ *               iduser:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               points:
+ *                 type: number
+ *     responses:
+ *       201:
+ *         description: Histórico de transação registrado com sucesso
+ *       400:
+ *         description: Campos obrigatórios ausentes
+ *       500:
+ *         description: Erro interno
+ */
+
 router.post('/historico/transacoes', async (req, res): Promise<void> => {
   const { iduser, description, points } = req.body
 
@@ -46,7 +108,39 @@ router.post('/historico/transacoes', async (req, res): Promise<void> => {
   }
 })
 
-// ✅ GET - Histórico combinado filtrado por data
+/**
+ * @swagger
+ * /historico/{iduser}:
+ *   get:
+ *     summary: Obtém histórico combinado (points + transações) por intervalo de datas
+ *     tags:
+ *       - Histórico
+ *     parameters:
+ *       - in: path
+ *         name: iduser
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: dataInicio
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *       - in: query
+ *         name: dataFim
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *     responses:
+ *       200:
+ *         description: Histórico combinado retornado com sucesso
+ *       400:
+ *         description: Datas não fornecidas
+ *       500:
+ *         description: Erro interno
+ */
 router.get('/historico/:iduser', async (req, res): Promise<void> => {
   const { iduser } = req.params
   const { dataInicio, dataFim } = req.query
@@ -81,7 +175,26 @@ router.get('/historico/:iduser', async (req, res): Promise<void> => {
   }
 })
 
-// ✅ GET - Todos os históricos (points + transações) SEM filtro de data
+/**
+ * @swagger
+ * /historico/todos/{iduser}:
+ *   get:
+ *     summary: Obtém todos os históricos (points + transações) sem filtro de data
+ *     tags:
+ *       - Histórico
+ *     parameters:
+ *       - in: path
+ *         name: iduser
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Histórico completo retornado com sucesso
+ *       500:
+ *         description: Erro interno
+ */
+
 router.get('/historico/todos/:iduser', async (req, res): Promise<void> => {
   const { iduser } = req.params
 
@@ -110,7 +223,45 @@ router.get('/historico/todos/:iduser', async (req, res): Promise<void> => {
   }
 })
 
-// PUT - Atualizar pontos ou descrição por ID e tabela
+/**
+ * @swagger
+ * /historico/{tabela}/{registroId}:
+ *   put:
+ *     summary: Atualiza pontos ou descrição por ID e tabela
+ *     tags:
+ *       - Histórico
+ *     parameters:
+ *       - in: path
+ *         name: tabela
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - histPoints
+ *             - histtransactions
+ *       - in: path
+ *         name: registroId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               points:
+ *                 type: number
+ *               description:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Registro atualizado com sucesso
+ *       400:
+ *         description: Dados inválidos
+ *       500:
+ *         description: Erro interno
+ */
 router.put('/historico/:tabela/:registroId', async (req, res): Promise<void> => {
   const { tabela, registroId } = req.params
   const { points, description } = req.body
@@ -162,8 +313,35 @@ router.put('/historico/:tabela/:registroId', async (req, res): Promise<void> => 
   }
 })
 
-
-// DELETE - Remover registro de pontos ou transações por ID
+/**
+ * @swagger
+ * /historico/{tabela}/{id}:
+ *   delete:
+ *     summary: Remove registro de pontos ou transações por ID
+ *     tags:
+ *       - Histórico
+ *     parameters:
+ *       - in: path
+ *         name: tabela
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - histPoints
+ *             - histtransactions
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Registro removido com sucesso
+ *       400:
+ *         description: Tabela inválida
+ *       500:
+ *         description: Erro interno
+ */
 router.delete('/historico/:tabela/:id', async (req, res): Promise<void> => {
   const { tabela, id } = req.params
 
@@ -183,7 +361,5 @@ router.delete('/historico/:tabela/:id', async (req, res): Promise<void> => {
     res.status(500).json({ error: 'Erro ao remover registro' })
   }
 })
-
-
 
 export default router

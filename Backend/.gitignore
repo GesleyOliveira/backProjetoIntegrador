@@ -17,7 +17,7 @@ Thumbs.db
 *.tsbuildinfo
 
 # Environment and sensitive config
-.env
+config/credentials.env
 .env.local
 .env.*.local
 
